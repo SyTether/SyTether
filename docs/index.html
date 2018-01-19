@@ -39,14 +39,14 @@
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         webGLRenderer.shadowMapEnabled = true;
 
-		polyhedron = createMesh(new THREE.DodecahedronGeometry(13, 3));
+		polyhedron = createMesh(new THREE.DodecahedronGeometry(13, 1));
 		scene.add(polyhedron);
 		
         // position and point the camera to the center of the scene
         camera.position.x = 1;
         camera.position.y = 1;
-        camera.position.z = 5;
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        camera.position.z = 50;
+        camera.lookAt(camera.position);
 
         // add the output of the renderer to the html element
         document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
