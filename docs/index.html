@@ -5,7 +5,15 @@
 <head>
     <title>SyTether</title>
     <script type="text/javascript" src="/libs/three.js"></script>
-		 <script type="text/javascript" src="../assets/fonts/helvetiker_bold.typeface.js"></script>
+	<script type="text/javascript" src="../assets/fonts/helvetiker_bold.typeface.js"></script>
+	<script type="text/javascript" src="../libs/postprocessing/ShaderPass.js"></script>	
+    <script type="text/javascript" src="../libs/postprocessing/RenderPass.js"></script>
+	<script type="text/javascript" src="../libs/postprocessing/EffectComposer.js"></script>
+    <script type="text/javascript" src="../libs/postprocessing/MaskPass.js"></script>
+    <script type="text/javascript" src="../libs/postprocessing/FilmPass.js"></script>
+    <script type="text/javascript" src="../libs/shaders/FilmShader.js"></script>
+	<script type="text/javascript" src="../libs/shaders/CopyShader.js"></script>
+
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -27,13 +35,26 @@
 
     // once everything is loaded, we run our Three.js stuff.
     function init() {
-        // create a scene, that will hold all our elements such as objects, cameras and lights.
+	
+		var clock = new THREE.Clock();
+        
+		// create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
         // create a camera, which defines where we're looking at.
         var camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 1000);
-
-        // create a render and set the size
+		
+		
+		// Add some ambient light
+		var ambi = new THREE.AmbientLight(0x181818);
+        scene.add(ambi);
+		
+		// Add a spotlight
+		var spotLight = new THREE.DirectionalLight(0xffffff);
+        spotLight.position.set(550, 100, 550);
+        spotLight.intensity = 0.6;
+        
+		// create a render and set the size
         var webGLRenderer = new THREE.WebGLRenderer();
         webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -58,7 +79,6 @@
                     bevelEnabled: true,
                     curveSegments: 1,
                     steps: 1
-					style: 
 				};
 		
 		console.log(THREE.FontUtils.faces);
@@ -77,7 +97,19 @@
 
         // add the output of the renderer to the html element
         document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
-
+		
+		// Add effect
+		var renderPass = new THREE.RenderPass(scene, camera);
+        var effectFilm = new THREE.FilmPass(0.8, 0.325, 256, false);
+		effectFilm.uniforms.grayscale.value = false;
+		effectFilm.uniforms.nIntensity.value = 1.5;
+		effectFilm.uniforms.sIntensity.value = 1;
+		effectFilm.uniforms.sCount.value = 256;
+		effectFilm.renderToScreen = true;
+				
+        var composer = new THREE.EffectComposer(webGLRenderer);
+        composer.addPass(renderPass);
+        composer.addPass(effectFilm);
         // call the render function
         var step = 0;
         render();
@@ -96,10 +128,11 @@
 		
         function render() {
             polyhedron.rotation.y = step += 0.01;
-
+			var delta = clock.getDelta();
             // render using requestAnimationFrame
             requestAnimationFrame(render);
             webGLRenderer.render(scene, camera);
+			composer.render(delta);
         }
     }
     window.onload = init;
