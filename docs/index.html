@@ -3,9 +3,9 @@
 <html>
 
 <head>
-    <title>Example 05.09 - Basic 3D geometries - Polyhedron</title>
+    <title>SyTether</title>
     <script type="text/javascript" src="/libs/three.js"></script>
-
+		 <script type="text/javascript" src="../assets/fonts/helvetiker_bold.typeface.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -31,7 +31,7 @@
         var scene = new THREE.Scene();
 
         // create a camera, which defines where we're looking at.
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 1000);
 
         // create a render and set the size
         var webGLRenderer = new THREE.WebGLRenderer();
@@ -39,13 +39,40 @@
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         webGLRenderer.shadowMapEnabled = true;
 
-		polyhedron = createMesh(new THREE.DodecahedronGeometry(13, 1));
+		polyhedron = createMesh(new THREE.DodecahedronGeometry(15, 1));
+		polyhedron.position.x = 0;
+		polyhedron.position.y = 0;
+		polyhedron.position.z = 0;
 		scene.add(polyhedron);
 		
-        // position and point the camera to the center of the scene
-        camera.position.x = 1;
+		// Add text
+		var text1;
+		var options = {
+                    size: 6,
+                    height: 0,
+                    weight: "bold",
+                    font: "helvetiker",
+                    bevelThickness: .5,
+                    bevelSize: 0.5,
+                    bevelSegments: 1,
+                    bevelEnabled: true,
+                    curveSegments: 1,
+                    steps: 1
+					style: 
+				};
+		
+		console.log(THREE.FontUtils.faces);
+		 
+		text1 = createMesh(new THREE.TextGeometry("SyTether", options));
+		text1.position.x = -15
+		text1.position.y = 20;
+		text1.position.z = 0;
+		scene.add(text1);
+        
+		// position and point the camera to the center of the scene
+        camera.position.x = 0;
         camera.position.y = 1;
-        camera.position.z = 50;
+        camera.position.z = 30;
         camera.lookAt(camera.position);
 
         // add the output of the renderer to the html element
